@@ -1,0 +1,190 @@
+#! /usr/bin/env node
+// const { echo } = require('shelljs')
+
+
+/** 
+ * 一、可执行脚本
+ */
+//  console.log('hello world');
+
+/** 
+ * 二、命令行参数的原始写法
+ */
+// console.log('hello ', process.argv[2]);
+// 上面代码中，实际上执行的是 node ./hello tom ，对应的 process.argv 是 ['node', '/path/to/hello', 'tom'] 。
+
+
+/**
+ * 三、新建进程
+ */
+// var name = process.argv[2]
+// var exec = require('child_process').exec
+// var child = exec('echo hello ' + name , function(err, stdout, stderr){
+//   if(err) throw err;
+//   console.log(stdout);
+// })
+
+// const shell = require('shelljs')
+
+// let name = process.argv[2]
+// shell.exec('echo hello ' + name)
+
+
+/** 
+ * 五、yargs模块  目前安装版本适用node v12.
+ */
+// const argv = require('yargs').argv
+// console.log('hello ', argv.name);
+/**
+ * yargs 可以上面的结果改为一个对象，每个参数项就是一个键值对。
+  // $ node hello --name=tom
+  // $ node hello --name tom
+  // argv = {
+  //   name: tom
+  // };
+ */
+
+//长短参数都可以使用
+// const argv = require('yargs')
+//   .alias('n', 'name')
+//   .argv
+// console.log('hello ', argv.n);
+/** 
+ * $ hello -n tom
+ * hello tom
+ * $ hello --name tom
+ * hello tom
+ */
+
+// argv 对象有一个下划线（_）属性，可以获取非连词线开头的参数。
+// console.log(argv._);
+/** 
+ * $ hello A -n tom B C
+ * hello  tom
+ * [ 'A', 'B', 'C' ]
+ */
+
+
+/** 
+ * 六、命令行参数的配置 yargs
+ * demand：是否必选
+ * default：默认值
+ * describe：提示
+ */
+
+// const argv = require('yargs')
+//   .demand(['n'])
+//   .default({n: 'tom'})
+//   .describe({n: 'your name'})
+//   .argv
+
+// console.log('hello ',argv.n);
+// 上面代码指定 n 参数不可省略，默认值为 tom，并给出一行提示。
+
+// options 方法允许将所有这些配置写进一个对象。
+// const argv = require('yargs')
+//   .option('n', {
+//     alias: 'name',
+//     demand: true,
+//     default: 'tom',
+//     describe: 'your name',
+//     type: 'string'
+//   })
+//   .argv
+
+// console.log('hello ',argv.n);
+
+// 有时，某些参数不需要值，只起到一个开关作用，这时可以用 boolean 方法指定这些参数返回布尔值。
+// const argv = require('yargs')
+//   .boolean(['n'])
+//   .default({n: false})
+//   .argv
+
+// console.log('hello ', argv.n);
+// 上面代码中，参数 n 总是返回一个布尔值，用法如下。
+/** 
+ * $ hello
+ * hello  false
+ * $ hello -n
+ * hello  true
+ * $ hello -n tom
+ * hello  true
+ */
+
+/** 
+ * 七、帮助信息 yargs
+ * usage：用法格式
+ * example：提供例子
+ * help：显示帮助信息
+ * epilog：出现在帮助信息的结尾
+ */
+
+// const argv = require('yargs')
+//   .option('n',{
+//     alias: 'name',
+//     demand: true,
+//     default: 'tom',
+//     describe: 'your name',
+//     type: 'string',
+//   })
+//   .usage('Usage: hello [option]')
+//   .example('hello -n tom', 'say hello to tom')
+//   .help('h')
+//   .alias('h', 'help')
+//   .epilog('copyright 2021')
+//   .argv
+
+// console.log('hello ',argv.n);
+
+/** 
+ * 八、子命令 yargs
+ */
+// const argv = require('yargs')
+//   .command('morning', 'good morning', function(yargs){
+//     console.log('Good Morning',);
+//   })
+//   .command('evening', 'good evening', function(yargs){
+//     console.log('Good Evening',);
+//   })
+//   .argv
+
+// console.log('hello ',argv.n);
+/** 
+ * $ hello morning -n tom
+ * Good Morning
+ * hello tom
+ */
+
+// yargs 和 shelljs 结合
+require('shelljs/global')
+const argv = require('yargs')
+  .command('morning', 'good morning', function(yargs){
+    echo('Good Morning',);
+  })
+  .command('evening', 'good evening', function(yargs){
+    echo('Good Evening',);
+  })
+  .argv
+
+// console.log('hello ',argv.n);
+
+// 每个子命令往往有自己的参数，这时就需要在回调函数中单独指定。回调函数中，要先用 reset 方法重置 yargs 对象。
+// 失效
+// require('shelljs/global')
+// const argv = require('yargs')
+//   .command('morning', 'good morning', function(yargs){
+//     echo('Good Morning')
+//     var argv = yargs.reset()
+//       .option('m',{
+//         alias: 'message',
+//         description: 'provide any sentence'
+//       })
+//       .help('h')
+//       .alias('h', 'help')
+//       .argv
+
+//     echo(argv.n)
+//   })
+//   .argv
+
+

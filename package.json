@@ -1,0 +1,10 @@
+{
+  "name": "hello",
+  "bin": {
+    "hello": "hello"
+  },
+  "dependencies": {
+    "shelljs": "^0.8.4",
+    "yargs": "^17.0.1"
+  }
+}
